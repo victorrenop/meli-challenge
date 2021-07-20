@@ -1,0 +1,9 @@
+{
+    "type": "struct",
+    "fields": [
+        {"metadata": {}, "name": "src", "type": "string", "nullable": false},
+        {"metadata": {}, "name": "dst", "type": "string", "nullable": false},
+        {"metadata": {}, "name": "weight", "type": "integer", "nullable": false},
+        {"metadata": {}, "name": "book", "type": "integer", "nullable": false}
+    ]
+}

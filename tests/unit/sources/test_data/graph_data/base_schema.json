@@ -1,0 +1,8 @@
+{
+    "type": "struct",
+    "fields": [
+        {"metadata": {}, "name": "id1", "type": "string", "nullable": true},
+        {"metadata": {}, "name": "id2", "type": "string", "nullable": true},
+        {"metadata": {}, "name": "weight", "type": "long", "nullable": true}
+    ]
+}
