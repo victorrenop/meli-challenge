@@ -8,7 +8,7 @@ from meli_challenge.utils.constants import (
     VERTICES_SCHEMA,
     BOOKS,
 )
-from pyspark.sql.functions import col, coalesce, lit, sum, collect_set, when
+from pyspark.sql.functions import col, coalesce, lit, sum, collect_set, when, lower
 from pyspark.sql import DataFrame
 from functools import reduce
 from operator import add
@@ -76,8 +76,8 @@ class WesterosGraph:
         mutual_friends = self._mutual_friends_motif()
         return (
             mutual_friends.filter(
-                (col("character_1") == character_1)
-                & (col("character_2") == character_2)
+                (lower(col("character_1")) == character_1.lower())
+                & (lower(col("character_2")) == character_2.lower())
             )
             .groupBy("character_1", "character_2")
             .agg(collect_set("mutual_friend").alias("mutual_friends"))
