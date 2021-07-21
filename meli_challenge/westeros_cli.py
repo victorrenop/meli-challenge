@@ -21,6 +21,16 @@ def print_mutual_friends(graph: WesterosGraph, mutual_friends: List[str]) -> Non
         )
 
 
+def print_all_characters_mutual_friends(graph: WesterosGraph) -> None:
+    result = graph.get_all_characters_mutual_friends()
+    for row in result.collect():
+        print(
+            "{character_1}\t{character_2}\t{mutual}".format(
+                **row.asDict(), mutual=",".join(row["mutual_friends"])
+            )
+        )
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -36,6 +46,11 @@ if __name__ == "__main__":
         nargs=2,
         metavar=("character 1", "character 2"),
         help="Prints the mutual friends of the two desired characters.",
+    )
+    parser.add_argument(
+        "--all_characters_mutual_friends",
+        action="store_true",
+        help="Prints the mutual friends of all characters.",
     )
     args = parser.parse_args()
 
@@ -54,5 +69,7 @@ if __name__ == "__main__":
 
     if args.aggregate_interactions:
         print_aggregate_interactions(graph)
+    elif args.all_characters_mutual_friends:
+        print_all_characters_mutual_friends(graph)
     else:
         print_mutual_friends(graph, args.mutual_friends)

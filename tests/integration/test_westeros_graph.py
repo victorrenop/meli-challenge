@@ -60,6 +60,59 @@ class TestWesterosGraph:
 
         assert expected_result == actual_result
 
+    def test_all_characters_mutual_friends(self, custom_session):
+        input_test_data = [
+            ["Addam-Marbrand", "Jaime-Lannister", 1, 1],
+            ["Addam-Marbrand", "Tywin-Lannister", 1, 1],
+            ["Jaime-Lannister", "Tywin-Lannister", 1, 1],
+            ["Eddard-Stark", "Jaime-Lannister", 1, 1],
+            ["Eddard-Stark", "Tywin-Lannister", 1, 1],
+        ]
+        expected_result = [
+            Row(
+                character_1="Addam-Marbrand",
+                character_2="Eddard-Stark",
+                mutual_friends=["Jaime-Lannister", "Tywin-Lannister"],
+            ),
+            Row(
+                character_1="Addam-Marbrand",
+                character_2="Jaime-Lannister",
+                mutual_friends=["Tywin-Lannister"],
+            ),
+            Row(
+                character_1="Addam-Marbrand",
+                character_2="Tywin-Lannister",
+                mutual_friends=["Jaime-Lannister"],
+            ),
+            Row(
+                character_1="Eddard-Stark",
+                character_2="Jaime-Lannister",
+                mutual_friends=["Tywin-Lannister"],
+            ),
+            Row(
+                character_1="Eddard-Stark",
+                character_2="Tywin-Lannister",
+                mutual_friends=["Jaime-Lannister"],
+            ),
+            Row(
+                character_1="Jaime-Lannister",
+                character_2="Tywin-Lannister",
+                mutual_friends=["Addam-Marbrand", "Eddard-Stark"],
+            ),
+        ]
+        object_reader = ObjectSource(
+            custom_session.spark_session,
+            input_test_data,
+        )
+        graph = WesterosGraph(custom_session, object_reader)
+
+        actual_result = graph.get_all_characters_mutual_friends().collect()
+        actual_result.sort(key=lambda x: (x["character_1"], x["character_2"]))
+        for row in actual_result:
+            row["mutual_friends"].sort()
+
+        assert expected_result == actual_result
+
     def test_empty_source_graph_creation(self, custom_session):
         graph = WesterosGraph(custom_session)
 

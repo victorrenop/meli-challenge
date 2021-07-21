@@ -1,0 +1,6 @@
+{
+    "source": "str",
+    "target": "str",
+    "weight": "int",
+    "book": "int"
+}

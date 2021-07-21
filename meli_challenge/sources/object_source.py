@@ -1,6 +1,6 @@
-from pyspark.sql.dataframe import DataFrame
 from meli_challenge.sources.source import Source
 from meli_challenge.utils.common_functions import schema_file_to_schema_object
+from pyspark.sql import DataFrame
 from pyspark.sql import SparkSession
 from typing import List
 

@@ -2,23 +2,20 @@ from meli_challenge.sessions import CustomSparkSession
 from meli_challenge.sources.source import Source
 from meli_challenge.sources import EdgesSource, VerticesSource
 from meli_challenge.utils.common_functions import schema_file_to_schema_object
-from pyspark.sql.functions import col, coalesce, lit, sum, collect_set
+from meli_challenge.utils.constants import (
+    INPUT_SCHEMA,
+    EDGES_SCHEMA,
+    VERTICES_SCHEMA,
+    BOOKS,
+)
+from pyspark.sql.functions import col, coalesce, lit, sum, collect_set, when
 from pyspark.sql import DataFrame
 from functools import reduce
 from operator import add
 
-INPUT_SCHEMA = "assets/schemas/input_schema.json"
-EDGES_SCHEMA = "assets/schemas/edges_schema.json"
-VERTICES_SCHEMA = "assets/schemas/vertices_schema.json"
-BOOKS = ["1", "2", "3"]
-
 
 class WesterosGraph:
     def __init__(self, session: CustomSparkSession, source_reader: Source = None):
-        # This import is needed because the graphframes package is only initialized
-        # after the spark session has been created
-        from graphframes import GraphFrame  # noqa
-
         self._session = session
 
         input_df = self._session.spark_session.createDataFrame(
@@ -27,16 +24,28 @@ class WesterosGraph:
         )
         if source_reader:
             input_df = source_reader.read(INPUT_SCHEMA)
+        self._graph = None
+        self.build_graph(input_df)
+
+    def build_graph(self, input_df: DataFrame, source_target: tuple = None) -> object:
+        # This import is needed because the graphframes package is only initialized
+        # after the spark session has been created
+        from graphframes import GraphFrame  # noqa
+
+        if not source_target:
+            source_target = ("character_1", "character_2")
         vertices_builder = VerticesSource(
-            self._session.spark_session, input_df, ["character_1", "character_2"]
+            self._session.spark_session, input_df, source_target
         )
         edges_builder = EdgesSource(
-            self._session.spark_session, input_df, "character_1", "character_2"
+            self._session.spark_session, input_df, *source_target
         )
-        self._graph = GraphFrame(
-            vertices_builder.read(VERTICES_SCHEMA),
-            edges_builder.read(EDGES_SCHEMA),
-        )
+        new_vertices = vertices_builder.read(VERTICES_SCHEMA)
+        new_edges = edges_builder.read(EDGES_SCHEMA)
+        if self._graph:
+            new_vertices = new_vertices.union(self._graph.vertices).distinct()
+            new_edges = new_edges.union(self._graph.edges).distinct()
+        self._graph = GraphFrame(new_vertices, new_edges)
 
     def get_aggregated_interactions(self) -> DataFrame:
         agg_results = (
@@ -64,13 +73,8 @@ class WesterosGraph:
         return result_df
 
     def get_mutual_friends(self, character_1: str, character_2: str) -> DataFrame:
-        mutual_friends = self._graph.find("(a)-[]->(b); (a)-[]->(c)")
-        mutual_friends = mutual_friends.select(
-            col("a.id").alias("mutual_friend"),
-            col("b.id").alias("character_1"),
-            col("c.id").alias("character_2"),
-        )
-        mutual_friends = (
+        mutual_friends = self._mutual_friends_motif()
+        return (
             mutual_friends.filter(
                 (col("character_1") == character_1)
                 & (col("character_2") == character_2)
@@ -79,4 +83,27 @@ class WesterosGraph:
             .agg(collect_set("mutual_friend").alias("mutual_friends"))
         )
 
-        return mutual_friends
+    def get_all_characters_mutual_friends(self) -> DataFrame:
+        mutual_friends = self._mutual_friends_motif()
+        return (
+            mutual_friends.filter(col("character_1") != col("character_2"))
+            .groupBy("character_1", "character_2")
+            .agg(collect_set("mutual_friend").alias("mutual_friends"))
+            .select(
+                when(col("character_1") > col("character_2"), col("character_2"))
+                .otherwise(col("character_1"))
+                .alias("character_1"),
+                when(col("character_1") < col("character_2"), col("character_2"))
+                .otherwise(col("character_2"))
+                .alias("character_2"),
+                "mutual_friends",
+            )
+            .filter(col("character_1") != col("character_2"))
+        ).distinct()
+
+    def _mutual_friends_motif(self) -> DataFrame:
+        return self._graph.find("(a)-[]->(b); (a)-[]->(c)").select(
+            col("a.id").alias("mutual_friend"),
+            col("b.id").alias("character_1"),
+            col("c.id").alias("character_2"),
+        )
