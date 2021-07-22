@@ -1,0 +1,9 @@
+services:
+    westeros_api:
+        build: .
+        container_name: "westeros_api"
+        stdin_open: true
+        tty: true
+        ports:
+            - "5000:5000"
+        
