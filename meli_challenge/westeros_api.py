@@ -1,7 +1,7 @@
 from meli_challenge.sessions import CustomSparkSession
 from meli_challenge.westeros_graph import WesterosGraph
 from meli_challenge.sources import ObjectSource
-from meli_challenge.utils.common_functions import check_json_object_schema
+from meli_challenge.utils.common_functions import check_json_object_schema, schema_file_to_schema_object
 from meli_challenge.utils.constants import (
     APP_HOST,
     APP_PORT,
@@ -27,14 +27,14 @@ app = Flask("westeros_api")
 def add_interactions_to_graph():
     if not check_json_object_schema(request.json, PAYLOAD_MAPPING):
         return Response(
-            "Invalid payload schema!\n" + "Expected schema: %s" % (PAYLOAD_SCHEMA),
+            "Invalid payload schema!\n" + "Expected schema: %s" % (schema_file_to_schema_object(PAYLOAD_SCHEMA)),
             status=400,
             mimetype="application/json",
         )
-    if request.json["book"] in BOOKS:
+    if request.json["book"] not in BOOKS:
         return Response(
             "Invalid book number in payload!\n"
-            + "Expected books: %s" % (",".join(BOOKS)),
+            + "Expected books: %s" % (BOOKS),
             status=400,
             mimetype="application/json",
         )
