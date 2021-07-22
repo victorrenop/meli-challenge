@@ -10,8 +10,6 @@ The documentation on the API functionality, developing process and how to run is
 - [Useful Commands](#useful-commands)
 - [Built With](#built-with)
 
-## Challenge Definition
-
 ## Useful Commands
 
 Some useful commands to help the developing process:
@@ -29,13 +27,18 @@ Some useful commands to help the developing process:
   - `make tests`: runs `pytest` with coverage
 4. **Documentation:**
 
-    The full documentation can be generated using the commands:
-    ```bash
-    $ make requirements-docs
-    $ cd docs
-    $ make html
-    ```
-    This generates the static HTML pages with the full documentation. You can access it by opening the file `docs/_build/html/index.html` on your browser.
+  First install the basic requirements:
+  ```bash
+  $ make requirements
+  ```
+
+  The full documentation can be generated using the commands:
+  ```bash
+  $ make requirements-docs
+  $ cd docs
+  $ make html
+  ```
+  This generates the static HTML pages with the full documentation. You can access it by opening the file `docs/_build/html/home.html` on your browser.
 
 ## Built With
 

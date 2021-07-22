@@ -6,6 +6,8 @@ Welcome to Meli Challenge's documentation!
 .. toctree::
    :maxdepth: 2
    
+   home
+   how_to_run
    modules
 
 Indices and tables
