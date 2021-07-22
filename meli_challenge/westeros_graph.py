@@ -30,7 +30,7 @@ class WesterosGraph:
     def build_graph(self, input_df: DataFrame, source_target: tuple = None) -> object:
         # This import is needed because the graphframes package is only initialized
         # after the spark session has been created
-        from graphframes import GraphFrame  # noqa
+        from graphframes import GraphFrame
 
         if not source_target:
             source_target = ("character_1", "character_2")
