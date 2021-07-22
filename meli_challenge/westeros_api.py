@@ -28,6 +28,21 @@ app = Flask("westeros_api")
 
 @app.route("/interactions", methods=["POST"])
 def add_interactions_to_graph():
+    """Adds interactions to the graph based on a post request.
+
+    The body of the request must contain the input interaction and the data must follow
+    the following rules: have same schema as the defined standard (located at the
+    payload_schema.json file) and only have books that are allowed to be inserted, those
+    being defined by the challenge as being only the book number 4. If those rules are
+    not followed, the request fails and returns a status code 400.
+
+    Returns:
+        Response: Flask response object cotaining a success message and status 201 if
+            the request is a success, else returns a response object containing the
+            failure message and status 400.
+
+    """
+
     if not check_json_object_schema(request.json, PAYLOAD_MAPPING):
         return Response(
             "Invalid payload schema!\n"
@@ -53,6 +68,20 @@ def add_interactions_to_graph():
 
 @app.route("/common-friends", methods=["GET"])
 def get_common_friends():
+    """Gets the list of common friends between two characters.
+
+    The characters are passed to the request as URL parameters following the pattern
+    "?source=SOURCE_CHARACTER_NAME&target=TARGET_CHARACTER_NAME".
+
+    The request must have both source and targe character or else the status code 400
+    is returned. If no common friends are found, an empty list is returned.
+
+    Returns:
+        Response: Response object with an error message and status 400 if no source or
+            target character are provided, else returns a json payload with the common
+            friends list.
+    """
+
     source = request.args.get("source")
     target = request.args.get("target")
     if not source or not target:

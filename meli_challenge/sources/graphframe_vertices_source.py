@@ -7,6 +7,21 @@ from typing import List
 
 
 class VerticesSource(Source):
+    """Builds a graph vertices dataframe using the input dataframe.
+
+    The vertices dataframe is built by getting all unique values of both source and
+    and target columns of the input dataframe. The output dataframe only has 1 column
+    for all the unique vertices called "id". This column is needed by the Graph Frames
+    package to correctly create a graph.
+
+    Args:
+        spark_session (SparkSession): Spark session provided by the user
+        input_df (DataFrame): Dataframe containing the original data. Must have a source
+            and target columns describing a relationship between vertices.
+        id_columns (List[str], optional): List containing the source and target columns.
+            Defaults to None.
+    """
+
     def __init__(
         self,
         spark_session: SparkSession,
@@ -18,6 +33,21 @@ class VerticesSource(Source):
         self._id_columns = id_columns if id_columns else ["id"]
 
     def read(self, schema_file: str) -> DataFrame:
+        """Reads the input dataframe into a vertices dataframe.
+
+        Args:
+            schema_file (str): File containing the schema of the output vertices
+                dataframe.
+
+        Raises:
+            InvalidSchema: If the input doesn't have the source and target columns or if
+                source and target columns have null values.
+
+        Returns:
+            DataFrame: Dataframe with only one column called "id" that contains all
+                unique vertices.
+        """
+
         self._validate_input_schema()
         result_df = self._spark_session.createDataFrame(
             self._spark_session.sparkContext.emptyRDD(),
@@ -29,6 +59,8 @@ class VerticesSource(Source):
         return result_df.distinct()
 
     def _validate_input_schema(self) -> None:
+        """Validates if the input dataframe has a valid schema"""
+
         input_columns = set(self._input_df.columns)
         input_schema = self._input_df.schema
         desired_columns = set(self._id_columns)

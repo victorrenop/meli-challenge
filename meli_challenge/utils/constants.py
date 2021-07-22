@@ -1,3 +1,5 @@
+"""Common values used accross the package, such as paths and flask values."""
+
 BOOKS = ["1", "2", "3"]
 INPUT_SCHEMA = "assets/schemas/input_schema.json"
 EDGES_SCHEMA = "assets/schemas/edges_schema.json"

@@ -35,7 +35,7 @@ Some useful commands to help the developing process:
     $ cd docs
     $ make html
     ```
-    This generates the static HTML pages with the full documentation. You can access it by opening the file `docs/_build/index.html` on your browser.
+    This generates the static HTML pages with the full documentation. You can access it by opening the file `docs/_build/html/index.html` on your browser.
 
 ## Built With
 
