@@ -31,7 +31,7 @@ $ make requirements-test
 
 ## The CLI
 
-The CLI is used to display the output of the 2 frist challenges. To use it, simply run on root folder:
+The CLI is used to display the output of the 2 first challenges. To use it, simply run on root folder:
 ```
 python -m meli_challenge.westeros_cli -h
 ```
@@ -55,11 +55,13 @@ python -m meli_challenge.westeros_cli assets/input_data/dataset.csv --mutual_fri
 
 Note that these commands will output the result in standard output following the formatting guide provided in the challenge.
 
-## The REST API
+## How to Start the REST API
 
 The rest API can be executed in two ways: directly at the terminal or via Docker container.
 
-### Terminal
+You can access the REST API full documentation [here](rest_api.md).
+
+### Running with Terminal
 Run on project's root:
 ```bash
 $ python -m meli_challenge.westeros_api
@@ -67,7 +69,7 @@ $ python -m meli_challenge.westeros_api
 
 This will start the Flask service and requests will be listened through the address `localhost` and port `5000`. The terminal window used to start the service will now output API logs.
 
-### Docker
+### Running with Docker
 To start the API using Docker, run on project's root:
 
 ```bash
