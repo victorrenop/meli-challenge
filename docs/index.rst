@@ -8,6 +8,7 @@ Welcome to Meli Challenge's documentation!
    
    home
    how_to_run
+   rest_api
    modules
 
 Indices and tables
