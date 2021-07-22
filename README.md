@@ -2,7 +2,7 @@
 
 Welcome to Meli Challenge!
 
-The documentation on the API functionality, developing process and how to run is located at the `docs/` folder. To generate and read it, follow the last step at the [Useful Commands](#useful-commands) section. In this page you will find the challenge definition and basic commands on how to setup de environment.
+The documentation on the API functionality, developing process and how to run is located at the `docs/` folder. To generate and read it, follow the last step at the [Useful Commands](#useful-commands) section. In this page you will find the basic commands on how to setup de environment.
 
 ## Table of Contents
 

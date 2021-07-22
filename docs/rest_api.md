@@ -37,7 +37,7 @@ Returns 400 if there was a schema error with the payload or if a invalid book wa
 - `source`: First character's name, must be a string.
 - `target`: Second character's name, must be a string.
 - `weight`: Number of interactions between the source and target characters, must be an integer.
-- `weight`: Book number, must be and integer equal to 4.
+- `book`: Book number, must be and integer equal to 4.
 
 ### Examples
 Valid request:
